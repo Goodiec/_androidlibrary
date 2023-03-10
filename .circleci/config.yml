@@ -1,26 +1,35 @@
-# Use the latest 2.1 version of CircleCI pipeline process engine.
-# See: https://circleci.com/docs/2.0/configuration-reference
 version: 2.1
-
-# Define a job to be invoked later in a workflow.
-# See: https://circleci.com/docs/2.0/configuration-reference/#jobs
 jobs:
-  say-hello:
-    # Specify the execution environment. You can specify an image from Dockerhub or use one of our Convenience Images from CircleCI's Developer Hub.
-    # See: https://circleci.com/docs/2.0/configuration-reference/#docker-machine-macos-windows-executor
+  build:
+    working_directory: ~/project
     docker:
-      - image: cimg/base:stable
-    # Add steps to the job
-    # See: https://circleci.com/docs/2.0/configuration-reference/#steps
+      - image: circleci/android:api-28-node8-alpha
     steps:
       - checkout
       - run:
-          name: "Say hello"
-          command: "echo Hello, World!"
-
-# Invoke jobs via workflows
-# See: https://circleci.com/docs/2.0/configuration-reference/#workflows
-workflows:
-  say-hello-workflow:
-    jobs:
-      - say-hello
+          name: Install dependencies
+          command: |
+            sudo add-apt-repository ppa:openjdk-r/ppa \
+            sudo apt-get update && sudo apt-get install -y \
+              openjdk-11-jdk \
+              wget \
+              unzip
+            wget https://dl.google.com/android/repository/sdk-tools-linux-4333796.zip
+            unzip -q sdk-tools-linux-4333796.zip -d android-sdk-linux
+            echo y | android-sdk-linux/tools/bin/sdkmanager "platforms;android-29" "build-tools;29.0.3"
+      - run:
+          name: Set up environment variables
+          command: |
+            echo 'export ANDROID_HOME=/home/circleci/project/android-sdk-linux' >> $BASH_ENV
+            echo 'export PATH=$PATH:$ANDROID_HOME/tools:$ANDROID_HOME/tools/bin:$ANDROID_HOME/platform-tools' >> $BASH_ENV
+      - run:
+          name: Install Android Studio
+          command: |
+            wget https://dl.google.com/dl/android/studio/ide-zips/4.1.3.0/android-studio-ide-201.7199119-linux.tar.gz
+            tar -xzf android-studio-ide-201.7199119-linux.tar.gz
+      - run:
+          name: Build project
+          command: ./gradlew clean assemble
+      - run:
+          name: Run unit tests
+          command: ./gradlew test
