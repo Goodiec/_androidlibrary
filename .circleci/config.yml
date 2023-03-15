@@ -27,24 +27,18 @@ jobs:
           name: Run unit tests
           command: ./gradlew test
       
-      - run:
-          name: Deploy to GitHub Packages
-          command: |
-            mvn deploy \
-              -Dmaven.test.skip=true \
-              -DskipTests \
-              -DaltDeploymentRepository=github::default::https://maven.pkg.github.com/Goodiec/_androidlibrary \
-              -DrepositoryId=github \
-              -Durl=https://maven.pkg.github.com/Goodiec/_androidlibrary \
-              -Dfile=target/androidlibrary-1.0-SNAPSHOT.jar \
-              -DpomFile=pom.xml \
-              -Dsources=target/androidlibrary-1.0-SNAPSHOT.jar \
-              -Djavadoc=target/androidlibrary-1.0-SNAPSHOT.jar \
-              -Dgpg.skip=true \
-              -Dmaven.deploy.skip=true \
-              -Dmaven.wagon.http.ssl.insecure=true \
-              -Dmaven.wagon.http.ssl.allowall=true \
-              -Dgithub.token=${GITHUB_TOKEN}
+      # - run:
+      #     name: Deploy to GitHub Packages
+      #     command: |
+      #       mvn deploy \
+      #         -DaltDeploymentRepository=github::default::https://maven.pkg.github.com/Goodiec/_androidlibrary \
+      #         -DrepositoryId=github \
+      #         -Durl=https://maven.pkg.github.com/Goodiec/_androidlibrary \
+      #         -Dfile=target/androidlibrary-1.0-SNAPSHOT.jar \
+      #         -DpomFile=pom.xml \
+      #         -Dsources=target/androidlibrary-1.0-SNAPSHOT.jar \
+      #         -Djavadoc=target/androidlibrary-1.0-SNAPSHOT.jar \
+      #         -Dgithub.token=${GITHUB_TOKEN}
 
 workflows:
   build:
