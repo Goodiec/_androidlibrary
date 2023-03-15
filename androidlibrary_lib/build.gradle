@@ -16,13 +16,6 @@ apply plugin: 'com.android.library'
 apply plugin: "com.jfrog.artifactory"
 apply plugin: "maven-publish"
 
-group = groupId
-apply plugin: 'jacoco'
-jacoco {
-    toolVersion = "0.8.2"
-}
-
-
 android {
 
     // The following are set in the common.gradle file
